@@ -29,12 +29,11 @@ app.get('/', (req, res) => {
   `)
 }) */
 app.get("/animals/:pet_type", (req, res) => {
- // console.log(pets[req.params.pet_type.toLowerCase()])
   const availablePets = pets[req.params.pet_type.toLowerCase()]
   if(!availablePets) return res.send(`<h2>Sorry we don't have ${req.params.pet_type}</h2>`);
   let listOfPets = `<ul>`;
   availablePets.forEach(pet => {
-    listOfPets += `<li>${pet.name}</li>`
+    listOfPets += `<li><a href="/animals/${req.params.pet_type}/${pet.name}">${pet.name}</li>`
   })
   listOfPets += `</ul>`;
 
@@ -43,6 +42,23 @@ app.get("/animals/:pet_type", (req, res) => {
   ${listOfPets}
   `)
 })
+app.get("/animals/:pet_type/:pet_id", (req, res) => {
+  const availablePets = pets[req.params.pet_type.toLowerCase()]
+  if(!availablePets) return res.send(`<h2>Sorry we don't have ${req.params.toLowerCase()}</h2>`);
+  const selectedPet = availablePets.find(pet => pet.name === req.params.pet_id)
+  if(!selectedPet) return res.send(`<h2>Sorry. Either ${req.params.pet_id} got adopted or this page does not exist</h2>`);
 
-
+  res.send(
+    `
+    <h1>This is ${selectedPet.name} profile</h1>
+    <img src=${selectedPet.url} alt=${selectedPet.name}/>
+    <ul>
+        <li>Breed: ${selectedPet.breed}</li>
+        <li>Age: ${selectedPet.age}</li>
+    </ul>
+    <p>Description: ${selectedPet.description}</p>
+    
+    `
+  )
+})
 app.listen(port, () => console.log(`Server running on port ${port}`));
